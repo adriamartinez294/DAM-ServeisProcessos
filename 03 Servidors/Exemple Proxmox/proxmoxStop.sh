@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Variables per defecte (es poden sobreescriure passant arguments)
-DEFAULT_USER="nomUsuari"
-DEFAULT_RSA_PATH="$HOME/Desktop/Proxmox IETI/id_rsa"
+DEFAULT_USER="amartinezhernandez"
+DEFAULT_RSA_PATH="/home/super/.ssh/id_rsa"
 
 USER="${1:-$DEFAULT_USER}"
 RSA_PATH=${2:-$DEFAULT_RSA_PATH}
