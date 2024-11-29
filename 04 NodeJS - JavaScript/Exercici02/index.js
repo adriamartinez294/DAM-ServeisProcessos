@@ -19,29 +19,53 @@ async function main() {
             ["E","·","·","·","·","·","·","·","·"],
             ["F","·","·","·","·","·","·","·","·"]]
 
+
     const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
     })
     console.clear()
 
-    while(true){
+    let missatge = ""
 
+    while(true){
+        
         dibuixa_matriu(matriu)
+
+        if (missatge != "") {
+            console.log(missatge)
+        }
         const comanda = await rl.question("Escriu una comanda: ")
 
         if (typeof comanda === "string" && comanda.length > 0) {
-            if (comanda === "ajuda") {
-                dibuixa_ajuda()
-            } else if (comanda === "sortir"){
+            let x = comanda.split(" ")
+            missatge = ""
+            if (x[0] === "ajuda") {
+                console.clear()
+                error = ""
+                while (true){
+                    dibuixa_ajuda()
+                    if (error != "") {
+                        console.log(error)
+                    }
+                    const surt = await rl.question("Escriu sortir per tornar enrere: ")
+                    if (surt === "sortir") {
+                        break
+                    } else {
+                        error = "Torna a provar."
+                    }
+                }
+            } else if (x[0] === "sortir"){
                 break
+            } else if (x[0] === "puntuacio"){
+                missatge = "Tresors trobats: " + partida.tresors + "/16 | Tirades restants: " + partida.tirades
             }
         }
 
         console.clear()
     }
 
-    rl.close() // Tancar la lectura 'readline'
+    rl.close() // Tancar la lectura
 }
 
 function dibuixa_matriu(matriu){
@@ -55,7 +79,14 @@ function dibuixa_matriu(matriu){
 }
 
 function dibuixa_ajuda(){
-    
+    console.log("COMANDES\n")
+    console.log("ajuda/help: mostren la llista de comandes")
+    console.log("carregar partida <nom_arxiu.json>: guarda la partida actual")
+    console.log("guardar partida <nom_arxiu.json>: carrega una partida guardada")
+    console.log("activar/desactivar trampa: a la dreta del tauler, mostra o amaga un segon tauler amb les caselles destapades")
+    console.log("destapar x,y: destapa la casella en aquella posició")
+    console.log("puntuacio: mostra la puntuacio actual i les tirades restants")
+    console.log("sortir: surt del programa\n")
 }
 
 
