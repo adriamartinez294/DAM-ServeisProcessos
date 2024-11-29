@@ -1,15 +1,19 @@
 const fs = require('fs').promises
 const readline = require('readline').promises
 
+let partida = {
+    arxiu: "",
+    caselles_hit: [],
+    caselles_amb_tresor: [],
+    trampa: false,
+    tirades: 32,
+    tresors: 0,
+}
+
+
+let missatge = ""
+
 async function main() {
-    let partida = {
-        arxiu: "",
-        caselles_hit: [],
-        caselles_amb_tresor: [],
-        trampa: false,
-        tirades: 32,
-        tresors: 0,
-    }
     
     let matriu = [[" ","0","1","2","3","4","5","6","7"],
             ["A","·","·","·","·","·","·","·","·"],
@@ -25,8 +29,6 @@ async function main() {
         output: process.stdout
     })
     console.clear()
-
-    let missatge = ""
 
     while(true){
         
@@ -59,6 +61,10 @@ async function main() {
                 break
             } else if (x[0] === "puntuacio"){
                 missatge = "Tresors trobats: " + partida.tresors + "/16 | Tirades restants: " + partida.tirades
+            } else if (x[0] === "activar" && x[1] === "trampa"){
+                activartrampa()
+            } else if (x[0] === "desactivar" && x[1] === "trampa"){
+                desactivartrampa()
             }
         }
 
@@ -67,6 +73,24 @@ async function main() {
 
     rl.close() // Tancar la lectura
 }
+
+function activartrampa(){
+    if (partida.trampa != true){
+        partida.trampa = true
+    } else {
+        missatge = "Ya esta activada la trampa"
+    }
+}
+
+function desactivartrampa(){
+    if (partida.trampa != false){
+        partida.trampa = false
+    } else {
+        missatge = "Ya esta desactivada la trampa"
+    }
+}
+
+
 
 function dibuixa_matriu(matriu){
     for (let array of matriu){
