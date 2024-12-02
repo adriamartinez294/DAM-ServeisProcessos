@@ -10,12 +10,7 @@ let partida = {
     tresors: 0,
 }
 
-
-let missatge = ""
-
-async function main() {
-    
-    let matriu = [[" ","0","1","2","3","4","5","6","7"],
+let matriu = [[" ","0","1","2","3","4","5","6","7"],
             ["A","·","·","·","·","·","·","·","·"],
             ["B","·","·","·","·","·","·","·","·"],
             ["C","·","·","·","·","·","·","·","·"],
@@ -23,12 +18,17 @@ async function main() {
             ["E","·","·","·","·","·","·","·","·"],
             ["F","·","·","·","·","·","·","·","·"]]
 
+let missatge = ""
+
+async function main() {
 
     const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
     })
     console.clear()
+
+    generaTresors()
 
     while(true){
         
@@ -65,6 +65,10 @@ async function main() {
                 activartrampa()
             } else if (x[0] === "desactivar" && x[1] === "trampa"){
                 desactivartrampa()
+            } else if (x[0] === "casella"){
+                missatge = JSON.stringify(partida.caselles_hit);
+            } else if (x[0] === "destapar"){
+                afegirCasellaHit(x[1])
             }
         }
 
@@ -102,6 +106,7 @@ function dibuixa_matriu(matriu){
     }
 }
 
+
 function dibuixa_ajuda(){
     console.log("COMANDES\n")
     console.log("ajuda/help: mostren la llista de comandes")
@@ -111,6 +116,93 @@ function dibuixa_ajuda(){
     console.log("destapar x,y: destapa la casella en aquella posició")
     console.log("puntuacio: mostra la puntuacio actual i les tirades restants")
     console.log("sortir: surt del programa\n")
+}
+
+function afegirCasellaHit(casella) {
+    const valid = validaCasella(casella);
+    if (valid) {
+        if (partida.caselles_hit.includes(casella)) {
+            missatge = "Aquesta casella ja està destapada!";
+            return;
+        }
+        partida.caselles_hit.push(casella);
+        if (partida.caselles_amb_tresor.includes(casella)) {
+            missatge = `Enhorabona! Has trobat un tresor a ${casella}`;
+            partida.tresors += 1;
+        } else {
+            const distancia = calculaDistanciaAlTresor(casella);
+            missatge = `S'ha destapat ${casella}. La distància al tresor més proper és ${distancia}`;
+        }
+        partida.tirades -= 1;
+        actualitzaMatriu();
+    } else {
+        missatge = "La casella introduïda no és vàlida";
+    }
+}
+
+function calculaDistanciaAlTresor(casella) {
+    const lletres = ["A", "B", "C", "D", "E", "F"];
+    const [lletra, num] = casella.split("");
+    const x1 = lletres.indexOf(lletra);
+    const y1 = parseInt(num);
+
+    let distanciaMinima = Infinity;
+
+    for (const tresor of partida.caselles_amb_tresor) {
+        const [lletraT, numT] = tresor.split("");
+        const x2 = lletres.indexOf(lletraT);
+        const y2 = parseInt(numT);
+
+        const distancia = Math.abs(x1 - x2) + Math.abs(y1 - y2);
+        distanciaMinima = Math.min(distanciaMinima, distancia);
+    }
+
+    return distanciaMinima;
+}
+
+
+function generaTresors() {
+    const lletres = ["A", "B", "C", "D", "E", "F"];
+    const nums = ["0", "1", "2", "3", "4", "5", "6", "7"];
+    const tresors = new Set();
+
+    while (tresors.size < 16) {
+        const lletra = lletres[Math.floor(Math.random() * lletres.length)];
+        const num = nums[Math.floor(Math.random() * nums.length)];
+        const casella = lletra + num;
+
+        tresors.add(casella);
+    }
+
+    partida.caselles_amb_tresor = Array.from(tresors);
+}
+
+function validaCasella(casella) {
+    const lletres = ["A", "B", "C", "D", "E", "F"];
+    const nums = ["0", "1", "2", "3", "4", "5", "6", "7"];
+
+    if (casella.length !== 2) {
+        return false;
+    }
+
+    const [lletra, num] = casella.split("");
+
+    return lletres.includes(lletra) && nums.includes(num);
+}
+
+function actualitzaMatriu() {
+    for (casella of partida.caselles_hit) {
+        const [lletra, num] = casella.split("");
+        for (llista of matriu) {
+            if (llista[0] === lletra){
+                if (partida.caselles_amb_tresor.includes(casella)){
+                    llista[parseInt(num) + 1] = "T"
+                } else {
+                    llista[parseInt(num) + 1] = "X"
+                }
+            }
+        }
+    }
 }
 
 
