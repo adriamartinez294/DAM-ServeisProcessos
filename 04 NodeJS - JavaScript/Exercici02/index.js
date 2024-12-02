@@ -118,7 +118,7 @@ function dibuixa_ajuda(){
     console.log("sortir: surt del programa\n")
 }
 
-function afegirCasellaHit(casella) {
+function afegirCasellaHit(casella) {        partida.tirades -= 1;
     const valid = validaCasella(casella);
     if (valid) {
         if (partida.caselles_hit.includes(casella)) {
@@ -132,8 +132,8 @@ function afegirCasellaHit(casella) {
         } else {
             const distancia = calculaDistanciaAlTresor(casella);
             missatge = `S'ha destapat ${casella}. La distància al tresor més proper és ${distancia}`;
+            partida.tirades -= 1;
         }
-        partida.tirades -= 1;
         actualitzaMatriu();
     } else {
         missatge = "La casella introduïda no és vàlida";
@@ -205,5 +205,21 @@ function actualitzaMatriu() {
     }
 }
 
+function winMenu(){
+    tirades =  partida.tirades - 32
+    console.clear()
+    console.log("FELICITACIONS!!!")
+    console.log(`        __________
+       /\\____;;___\\
+      | /         /
+      \`. ())oo() .
+       |\\(%()*^^()^\\
+      %| |-%-------|
+     % \\ | %  ))   |
+     %  \\|%________|
+    `)
+    console.log("Has guanyat amb només " + tirades + " tirades") 
+}
 
-main()
+
+winMenu()
